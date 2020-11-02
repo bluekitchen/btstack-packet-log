@@ -1,0 +1,3 @@
+[
+    { "caption": "BTstack: Convert HCI Packet Log (pklg)", "command": "btstack_packet_log" },
+]
