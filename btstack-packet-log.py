@@ -139,6 +139,8 @@ class BtstackPacketLogCommand(sublime_plugin.TextCommand):
 		outfile = tempfile.NamedTemporaryFile(mode='w+b', suffix='.pklg')
 		# create pklg from window content
 		processText(content, outfile)
+		# Make sure the viewer can read all converted packets from disk.
+		outfile.flush()
 		# try to open pklg in PacketLogger (mac) or Wireshark (other)
 		if sublime.platform() == "osx":
 			subprocess.call(["open", outfile.name])
