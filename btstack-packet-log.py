@@ -141,8 +141,21 @@ class BtstackPacketLogCommand(sublime_plugin.TextCommand):
 		processText(content, outfile)
 		# Make sure the viewer can read all converted packets from disk.
 		outfile.flush()
-		# try to open pklg in PacketLogger (mac) or Wireshark (other)
+		# Prefer PacketLogger on macOS, then fall back to Wireshark.
 		if sublime.platform() == "osx":
-			subprocess.call(["open", outfile.name])
+			try:
+				if subprocess.call(["open", "-a", "PacketLogger", outfile.name]) == 0:
+					return
+			except OSError:
+				pass
+
+		try:
+			if subprocess.call(["wireshark", outfile.name]) == 0:
+				return
+		except OSError:
+			pass
+
+		if sublime.platform() == "osx":
+			sublime.error_message("Could not open packet log with PacketLogger or Wireshark")
 		else:
-			subprocess.call(["wireshark", outfile.name])
+			sublime.error_message("Could not open packet log with Wireshark")
